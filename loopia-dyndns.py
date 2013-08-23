@@ -37,7 +37,7 @@ INTERFACES = {
 
 VERBOSE = False
 
-__VERSION__ = "0.1"
+__VERSION__ = "0.2"
 
 try:
     DEFAULT_IFACE4 = INTERFACES[platform.system()]
