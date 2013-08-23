@@ -188,7 +188,9 @@ def update_ip_info(username, password, domain, ip4_address, ip6_address):
             record['rdata'] = ip4_address
 
         if (old_ipv4 is not None) or (old_ipv6 is not None):
-            get_rpc_client().updateZoneRecord(username, password, domain, subdomain, record)
+            status = get_rpc_client().updateZoneRecord(username, password, domain, subdomain, record)
+            if status != "OK":
+                error_exit("ERROR: Failed to update zone record, reason: {}".format(status))
             if old_ipv4 is not None:
                 verbose_message("Zone {}.{} updated. Old IPV4: {}, New IPV4: {}".format(
                     subdomain, domain, old_ipv4, ip4_address))
