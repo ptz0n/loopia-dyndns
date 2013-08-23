@@ -118,7 +118,7 @@ def main():
     if ip4_address or ip6_address:
         update_ip_info(username, password, domain, ip4_address, ip6_address)
     else:
-        print "No ip address available!"
+        error_exit("No ip address found! See loopia-dynds-py -h for help.")
 
 
 def verbose_message(message):
@@ -175,9 +175,9 @@ def update_ip_info(username, password, domain, ip4_address, ip6_address):
     zone_records = get_rpc_client().getZoneRecords(username, password, domain, subdomain)
 
     if isinstance(zone_records, list) and len(zone_records) and zone_records[0] == "AUTH_ERROR":
-        sys.exit("Wrong API username or password!")
+        error_exit("Wrong API username or password!")
     elif isinstance(zone_records, list) and len(zone_records) == 0:
-        sys.exit("Domain {}.{} not found.".format(subdomain, domain))
+        error_exit("Domain {}.{} not found.".format(subdomain, domain))
 
     for record in zone_records:
         if ip6_address and (record['type'] == 'AAAA') and (ip6_address != record['rdata']):
@@ -201,7 +201,7 @@ def get_domain_tuple(domain):
     count = domain.count('.')
 
     if not count:
-        sys.exit("Invalid domain {}".format(domain))
+        error_exit("Invalid domain {}".format(domain))
     if count == 1:
         subdomain = '@'
     else:
