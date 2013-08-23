@@ -170,21 +170,24 @@ def get_my_ipv6(args):
 
 
 def update_ip_info(username, password, domain, ip4_address, ip6_address):
-    old_ipv4, old_ipv6, update_required = None, None, False
+    old_ipv4, old_ipv6 = None, None
     (subdomain, domain) = get_domain_tuple(domain)
     zone_records = get_rpc_client().getZoneRecords(username, password, domain, subdomain)
+
+    if isinstance(zone_records, list) and len(zone_records) and zone_records[0] == "AUTH_ERROR":
+        sys.exit("Wrong API username or password!")
+    elif isinstance(zone_records, list) and len(zone_records) == 0:
+        sys.exit("Domain {}.{} not found.".format(subdomain, domain))
 
     for record in zone_records:
         if ip6_address and (record['type'] == 'AAAA') and (ip6_address != record['rdata']):
             old_ipv6 = record['rdata']
             record['rdata'] = ip6_address
-            update_required = True
         if ip4_address and (record['type'] == 'A') and (ip4_address != record['rdata']):
             old_ipv4 = record['rdata']
             record['rdata'] = ip4_address
-            update_required = True
 
-        if update_required:
+        if (old_ipv4 is not None) or (old_ipv6 is not None):
             get_rpc_client().updateZoneRecord(username, password, domain, subdomain, record)
             if old_ipv4 is not None:
                 verbose_message("Zone {}.{} updated. Old IPV4: {}, New IPV4: {}".format(
