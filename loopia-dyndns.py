@@ -158,7 +158,7 @@ def get_my_ipv6(args):
     try:
         if args.interface6:
             # TODO(Ratler): Properly iterate and find a valid ipv6 address, this doesn't always work
-            return ni.ifaddresses(args.interface6)[ni.AF_INET6][1]['addr']
+            return ni.ifaddresses(args.interface6)[ni.AF_INET6][0]['addr']
         else:
             return None
     except ValueError:
@@ -170,6 +170,7 @@ def get_my_ipv6(args):
 
 
 def update_ip_info(username, password, domain, ip4_address, ip6_address):
+    verbose_message("update_ip_info(ip4: %s, ip6: %s)" % (ip4_address, ip6_address))
     old_ipv4, old_ipv6 = None, None
     (subdomain, domain) = get_domain_tuple(domain)
     zone_records = get_rpc_client().getZoneRecords(username, password, domain, subdomain)
