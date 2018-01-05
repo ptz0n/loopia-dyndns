@@ -10,4 +10,4 @@ See ./loopia-dyndns.py -h for help.
 
 
 ## Enable Loopia API
-[Loopia API](https://customerzone.loopia.se/settings/loopia-api)
+[Loopia API](https://customerzone.loopia.se/api/)
